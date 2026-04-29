@@ -43,6 +43,41 @@ const productController = {
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
+  },
+
+  updateProduct: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, description } = req.body;
+      const updated = await Product.findOneAndUpdate(
+        { productId: id, manufacturer: req.user.id },
+        { name, description },
+        { new: true }
+      );
+
+      if (!updated) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+
+      res.json({ product: updated });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  deleteProduct: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleted = await Product.findOneAndDelete({ productId: id, manufacturer: req.user.id });
+
+      if (!deleted) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+
+      res.json({ message: 'Product deleted successfully' });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
   }
 };
 

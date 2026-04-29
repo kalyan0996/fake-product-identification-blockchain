@@ -1,6 +1,5 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import AddProduct from './pages/AddProduct';
@@ -11,9 +10,9 @@ import Register from './pages/Register';
 function App() {
   return (
     <Router>
-      <div className="App">
+      <div className="min-h-screen bg-slate-950 text-slate-100">
         <Navbar />
-        <div className="container mt-4">
+        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/add-product" element={<AddProduct />} />
@@ -21,7 +20,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
           </Routes>
-        </div>
+        </main>
       </div>
     </Router>
   );
