@@ -1,21 +1,29 @@
-# Fake Product Blockchain App - Deployment Guide
+# Fake Product Identification Blockchain
 
-## Run with Docker Compose
+Blockchain-based fake product identification system using QR codes, React, Node.js, MongoDB, Docker, Kubernetes, and GitHub Actions.
 
-### 1. Connect to EC2
+---
+
+# Clone Repository
 
 ```bash
-ssh -i "your-key.pem" ubuntu@YOUR_EC2_IP
+git clone https://github.com/kalyan0996/fake-product-identification-blockchain.git
+
+cd fake-product-identification-blockchain
 ```
 
 ---
 
-## 2. Install Docker & Git
+# Run with Docker Compose (Recommended)
+
+## Install Docker
+
+### Ubuntu / EC2
 
 ```bash
 sudo apt update -y
 
-sudo apt install -y docker.io docker-compose git
+sudo apt install -y docker.io docker-compose
 
 sudo systemctl start docker
 sudo systemctl enable docker
@@ -23,20 +31,7 @@ sudo systemctl enable docker
 
 ---
 
-## 3. Clone Project
-
-```bash
-mkdir ~/apps
-cd ~/apps
-
-git clone YOUR_GITHUB_REPO_URL project
-
-cd project
-```
-
----
-
-## 4. Run Docker Compose
+## Start Project
 
 ```bash
 docker compose up -d --build
@@ -44,7 +39,7 @@ docker compose up -d --build
 
 ---
 
-## 5. Check Running Containers
+## Check Running Containers
 
 ```bash
 docker ps
@@ -52,17 +47,81 @@ docker ps
 
 ---
 
-## 6. Open Application
+## Open Application
+
+Frontend:
 
 ```txt
-http://YOUR_EC2_IP
+http://localhost
+```
+
+Backend API:
+
+```txt
+http://localhost:5000
 ```
 
 ---
 
-# Run with Kubernetes
+# Run Without Docker
 
-## 1. Install kubectl
+## Install Requirements
+
+```bash
+sudo apt update -y
+
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+
+sudo apt install -y nodejs npm mongodb
+```
+
+---
+
+# Backend Setup
+
+```bash
+cd backend
+
+npm install
+```
+
+## Create `.env`
+
+```env
+MONGODB_URI=mongodb://localhost:27017/fake-product-db
+
+JWT_SECRET=mysecret
+
+PORT=5000
+```
+
+---
+
+## Start Backend
+
+```bash
+npm start
+```
+
+---
+
+# Frontend Setup
+
+Open new terminal:
+
+```bash
+cd frontend
+
+npm install
+
+npm start
+```
+
+---
+
+# Run Kubernetes Deployment
+
+## Install kubectl
 
 ```bash
 sudo snap install kubectl --classic
@@ -70,17 +129,17 @@ sudo snap install kubectl --classic
 
 ---
 
-## 2. Apply Kubernetes Files
+## Apply Kubernetes Files
 
 ```bash
-cd ~/apps/project/k8s
+cd k8s
 
 kubectl apply -f .
 ```
 
 ---
 
-## 3. Check Pods
+## Check Pods
 
 ```bash
 kubectl get pods
@@ -88,17 +147,7 @@ kubectl get pods
 
 ---
 
-## 4. Check Services
-
-```bash
-kubectl get svc
-```
-
----
-
-## 5. Open Application
-
-Use External IP from:
+## Check Services
 
 ```bash
 kubectl get svc
@@ -108,12 +157,14 @@ kubectl get svc
 
 # GitHub Actions CI/CD
 
+GitHub Actions workflow automatically deploys project after pushing to `main` branch.
+
 ## Create GitHub Secrets
 
 Go to:
 
 ```txt
-GitHub Repo → Settings → Secrets and variables → Actions
+GitHub Repository → Settings → Secrets and variables → Actions
 ```
 
 Add:
@@ -126,16 +177,16 @@ EC2_SSH_KEY
 
 ---
 
-## Example GitHub Actions Workflow
+## Example Deploy Workflow
 
-Create file:
+Create:
 
 ```txt
 .github/workflows/deploy.yml
 ```
 
 ```yaml
-name: Deploy App
+name: Deploy Application
 
 on:
   push:
@@ -147,7 +198,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Deploy to EC2
@@ -158,11 +209,12 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
 
           script: |
-            cd ~/apps/project
+            cd ~/fake-product-identification-blockchain
 
             git pull origin main
 
             docker compose down
+
             docker compose up -d --build
 ```
 
@@ -173,10 +225,13 @@ jobs:
 ## Docker
 
 ```bash
-docker ps
-docker logs CONTAINER_ID
-docker compose down
 docker compose up -d
+
+docker compose down
+
+docker logs CONTAINER_ID
+
+docker ps
 ```
 
 ---
@@ -185,16 +240,39 @@ docker compose up -d
 
 ```bash
 kubectl get pods
+
 kubectl get svc
+
 kubectl logs POD_NAME
-kubectl delete -f .
 ```
 
 ---
 
-# Login
+# Login Credentials
 
 ```txt
 Email: demo@product.app
 Password: Demo1234!
 ```
+
+---
+
+# Tech Stack
+
+- React.js
+- Node.js
+- Express.js
+- MongoDB
+- Docker
+- Kubernetes
+- GitHub Actions
+- Blockchain
+- QR Code Authentication
+
+---
+
+# Repository
+
+:contentReference[oaicite:0]{index=0}
+
+Project uses blockchain-based QR verification for counterfeit product detection. :contentReference[oaicite:1]{index=1}
