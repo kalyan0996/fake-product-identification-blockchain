@@ -22,8 +22,11 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/blockchain', require('./routes/blockchain'));
 app.use('/api/products', productRoutes);
+app.use('/api/blockchain', require('./routes/blockchain'));
 app.use('/api/verify', verificationRoutes);
+app.use('/api/blockchain', require('./routes/blockchain'));
 
 // Metrics endpoint
 app.get('/metrics', async (req, res) => {

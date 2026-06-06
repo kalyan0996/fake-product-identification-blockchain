@@ -1,0 +1,49 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_19-c216de4752d9adacda9a03cf247145abc3a3ca7d",
+  "solcVersion": "0.8.19",
+  "solcLongVersion": "0.8.19+commit.7dd6d404",
+  "compilerType": "solc",
+  "toolVersions": {
+    "hardhat": "3.8.0"
+  },
+  "userSourceNameMap": {
+    "contracts/ProductRegistry.sol": "project/contracts/ProductRegistry.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "paris",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/ProductRegistry.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.19;\n\ncontract ProductRegistry {\n    address public owner;\n\n    struct Product {\n        string productId;\n        string name;\n        string manufacturer;\n        uint256 timestamp;\n        bool isRegistered;\n    }\n\n    mapping(string => Product) private products;\n    string[] private productIds;\n\n    event ProductRegistered(string productId, string name, string manufacturer, uint256 timestamp);\n    event ProductVerified(string productId, bool isAuthentic, uint256 timestamp);\n\n    constructor() {\n        owner = msg.sender;\n    }\n\n    modifier onlyOwner() {\n        require(msg.sender == owner, \"Only owner can call this\");\n        _;\n    }\n\n    function registerProduct(string memory _productId, string memory _name, string memory _manufacturer) public onlyOwner {\n        require(!products[_productId].isRegistered, \"Product already registered\");\n        products[_productId] = Product(_productId, _name, _manufacturer, block.timestamp, true);\n        productIds.push(_productId);\n        emit ProductRegistered(_productId, _name, _manufacturer, block.timestamp);\n    }\n\n    function verifyProduct(string memory _productId) public returns (bool) {\n        bool isAuthentic = products[_productId].isRegistered;\n        emit ProductVerified(_productId, isAuthentic, block.timestamp);\n        return isAuthentic;\n    }\n\n    function getProduct(string memory _productId) public view returns (\n        string memory, string memory, string memory, uint256, bool\n    ) {\n        Product memory p = products[_productId];\n        return (p.productId, p.name, p.manufacturer, p.timestamp, p.isRegistered);\n    }\n\n    function getProductCount() public view returns (uint256) {\n        return productIds.length;\n    }\n}\n"
+      }
+    }
+  }
+}

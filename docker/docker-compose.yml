@@ -1,4 +1,48 @@
 services:
+
+  ganache:
+    image: trufflesuite/ganache:latest
+    container_name: docker-ganache
+    ports:
+      - "8545:8545"
+    command: --port 8545 --chain.chainId 1337 --wallet.deterministic true --wallet.totalAccounts 10 --host 0.0.0.0
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:6
+    container_name: docker-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: docker-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/fake-product-db
+      - JWT_SECRET=your_super_secret_jwt_key_change_this
+      - PORT=5000
+      - NODE_ENV=production
+      - BLOCKCHAIN_RPC_URL=http://ganache:8545
+      - CONTRACT_ADDRESS=0x5b1869D9A4C187F2EAa108f3062412ecf0526b24
+      - BLOCKCHAIN_CHAIN_ID=1337
+    depends_on:
+      - mongo
+      - ganache
+    networks:
+      - app-network
+    restart: unless-stopped
+
   frontend:
     build:
       context: ..
@@ -8,29 +52,13 @@ services:
       - "3000:80"
     depends_on:
       - backend
+    networks:
+      - app-network
+    restart: unless-stopped
 
-  backend:
-    build:
-      context: ../backend
-      dockerfile: ../docker/Dockerfile.backend
-    container_name: docker-backend
-    ports:
-      - "5000:5000"
-    environment:
-      - MONGODB_URI=mongodb://mongo:27017/fake-product-db
-      - JWT_SECRET=mysecret
-      - PORT=5000
-    depends_on:
-      - mongo
-
-  mongo:
-    image: mongo:6
-    container_name: docker-mongo
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   mongo-data:
